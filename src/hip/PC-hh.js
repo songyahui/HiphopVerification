@@ -1,34 +1,42 @@
 int itemCount = 0;
 
-procedure producer :
+hiphop module producer(){
+  loop{
 
-LOOP:
-  item = produceItem();
+    item = produceItem();
 
-  AWAIT NotFull;
+    await count(attempts, NotFull);
   
-  putItemIntoBuffer(item);
+    putItemIntoBuffer(item);
         
-  itemCount = itemCount + 1;
+    itemCount = itemCount + 1;
 
-  if (itemCount == 1) 
-    {
-      EMIT NOTEMP;
-    }
-;
+    if (itemCount == 1) { emit NotEmp;}
+  }
+}
 
-procedure consumer() :
-  LOOP:
+hiphop module consumer(){
+  loop{
 
-    AWAIT NOTEMP ;
+    await NotEmp;
 
     item = removeItemFromBuffer();
+
     itemCount = itemCount - 1;
 
-    if (itemCount == BUFFER_SIZE - 1) 
-    {
-      EMIT NotFull;
-    }
+    if (itemCount == BUFFER_SIZE - 1) {emit NotFull;}
 
     consumeItem(item);
-;
+
+  }
+}
+
+
+hiphop module Main () {
+  fork{
+    run producer();
+  }
+  par {
+    run consumer();
+  }
+}

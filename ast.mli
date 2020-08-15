@@ -40,17 +40,26 @@ type postcondition  = trace list
 
 type inclusion = INC of es list * es list;;
 
+type jscode = 
+            JSnumber of int
+          | Var of var
+          | Assign of jscode * jscode
+          | Binary of jscode * jscode
 
-type prog = Nothing 
-          | Pause 
+
+type hiphop = 
+            Nothing 
+          | Loop of prog
           | Seq of prog * prog 
           | Par of prog * prog
-          | Loop of prog
-          | Declear of var * prog
+          | Await of prog
+          | If of cond * prog * prog
           | Emit of var
-          | Present of var * prog * prog
           | Trap of name * prog
           | Exit of name * int
+          | JS of jscode
+
+type prog = Module of name * hiphop list 
 
 
 type ltl = Lable of string 

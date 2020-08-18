@@ -24,99 +24,30 @@ let float = digit* frac? exp?
 (* part 3 *)
 let white = [' ' '\t']+
 let newline = '\n' | '\r' | "\r\n" 
-let id = ['a'-'v' 'x'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
+let id = ['a'-'z' 'A'-'Z'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
 
 rule token = parse
 | white    { token lexbuf }
 | newline  { next_line lexbuf; token lexbuf }
-| "nothing" { NOTHING }
-| "pause" {PAUSE}  
-| "loop" {LOOP}
-| "signal" {SIGNAL}
-| "emit" {EMIT}
-| "present" {PRESENT}
-| "trap" {TRAP}
-| "exit" {EXIT}
-| "emp" { EMPTY }
-| "ensure" {ENSURE}
-| '(' { LPAR }
-| ')' { RPAR }
-| ';' { SIMI }
-| int      { INTE (int_of_string (Lexing.lexeme lexbuf)) }
-| '.' { CONCAT }
-| "||" { PAR }
-| 'X' {NEXT}
-| 'U' {UNTIL}
-| id as str { VAR str }
-| "|-" {ENTIL}
-| "\\/" {DISJ}
-| '_' {UNDERLINE}
-| '[' { LBrackets }
-| ']' { RBrackets }
-| ',' { COMMA }
 
-| '^' { POWER }
-| 'w' { OMEGA }
-| '*' {KLEENE}
-| "<>" {FUTURE}  
-| "[]" {GLOBAL}
-| "->" {IMPLY}
-| '!' {LTLNOT}
-
-| "&&" {LILAND}
-| "||" {LILOR}
-
-| "/*" {LSPEC}
-| "*/" {RSPEC}
-| eof { EOF }
-
-(*
-
-| "TRUE" { TRUE }
-| "FALSE" { FALSE }
-| "if" {IF}
-| "else" {ELSE}
+| "var"   { VARKEY }
 | "require" {REQUIRE}
+| "exports" {EXPORTS}
+| "new" {NEW}
 
-| "include" {INCLUDE}
-| "true" { TRUEE (bool_of_string (Lexing.lexeme lexbuf))}
-| "false" { FALSEE (bool_of_string (Lexing.lexeme lexbuf))}
-| '"'      { read_string (Buffer.create 17) lexbuf }
-| ">=" {GTEQ}
-| "<=" {LTEQ}
-| '>' {GT}
-| '<' {LT}
-| '=' {EQ}
-
-| '|' { CHOICE }
+| id as str { VAR str }
 
 | '"' { read_string (Buffer.create 17) lexbuf }
-
-| '[' { LBrackets }
-| ']' { RBrackets }
-| '{' { LBRACK  }
-| '}' { RBRACK }
-
-
-| '+' { PLUS }
-| '-' { MINUS }
-| '#' { SHARP }
-
-
-| '~' {NEGATION}
-
-
-| "/\\" {CONJ}
-| "==" {EQEQ}
-| ">=" {GTEQ}
-| "<=" {LTEQ}
-
-*)
+| '(' { LPAR }
+| ')' { RPAR }
+| '=' {EQ}
+| ';' {SIMI}
+| '.' {DOT}
+| ',' { COMMA }
 | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
+| eof      { EOF }
 
-
-(* part 5 
 and read_string buf =
   parse
   | '"'       { STRING (Buffer.contents buf) }
@@ -133,5 +64,3 @@ and read_string buf =
     }
   | _ { raise (SyntaxError ("Illegal string character: " ^ Lexing.lexeme lexbuf)) }
   | eof { raise (SyntaxError ("String is not terminated")) }
-
-  *)

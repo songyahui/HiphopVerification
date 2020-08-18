@@ -96,62 +96,17 @@ let rec input_lines file =
 ;;
 
 
-
+let string_of_declare (d : declare): string = 
+  match d with 
+    Import str -> str
+  | Require (id1, id2) -> id1 ^ " = " ^ id2
+  | Export e -> e
+  | _ -> raise (Foo "string_of_declare")
+  ;;
 
 let rec string_of_prog (p : prog) : string =
-  match p with
-    Nothing -> "nothing"
-  | Pause -> "pause"
-  | Seq (p1, p2) ->  "(seq " ^ string_of_prog p1 ^ " " ^ string_of_prog p2 ^" )"
-  | Par (p1, p2) ->  "(par " ^ string_of_prog p1 ^ " " ^ string_of_prog p2 ^" )"
-  | Loop pIn -> "(loop " ^ string_of_prog pIn ^ ")"
-  | Declear (s, prog) -> "(signal " ^ s ^ " " ^ string_of_prog prog ^" )"
-  | Emit s -> "(emit " ^ s ^ ")"
-  | Present (s, p1, p2) -> "(present " ^ s ^ " " ^ string_of_prog p1 ^" " ^ string_of_prog p2 ^" )"
-  | Trap (mn, prog) -> "(trap "  ^ mn ^" " ^ string_of_prog prog ^" )"
-  | Exit (mn, d) -> "(exit " ^ mn ^" " ^ string_of_int d^ ")"
-  ;;
 
-let string_of_sl (sl):string = 
-  List.fold_left (fun acc (name, state) -> acc ^ " " ^ (match state with One -> name | Zero -> (*"!" ^name*) "")) "" sl
-;;
-
-let string_of_instance ((cons, mapping):instance) :string = 
-  if List.length mapping == 0 then ""
-  else 
-  (*let temp = "(" ^ string_of_sl cons ^ ")" in 
-  *)
-  let temp1 = "[" ^ string_of_sl mapping ^ "]" in 
-  (*temp ^ " & " ^*)
-  temp1
-  ;;
-
-
-let rec string_of_es (es:es) :string = 
-  match es with 
-    Bot -> "_|_"  
-  | Emp -> "emp"
-  | Instance ins  -> string_of_instance ins
-  | Con (es1, es2) ->  string_of_es es1 ^ " . " ^ string_of_es es2
-  | Omega esIn -> "(" ^ string_of_es esIn ^ ")^w"
-  | Any -> "_"
-  | Kleene esIn -> "(" ^ string_of_es esIn ^ ")^*" 
-  | Ntimed (esIn, n) ->"(" ^ string_of_es esIn ^ ")^" ^ string_of_int n 
-  | Not esIn -> "(!" ^ string_of_es esIn ^ ")"
-  ;;
-
-
-let rec showLTL (ltl:ltl):string =
-  match ltl with 
-    Lable str -> str
-  | Next l -> "(" ^"X" ^showLTL l ^")"
-  | Until (l1, l2) -> "(" ^showLTL l1 ^ " U " ^showLTL l2 ^")"
-  | Global l -> "(" ^"[] " ^showLTL l ^")"
-  | Future l -> "(" ^"<> " ^showLTL l ^")"
-  | NotLTL l -> "(" ^"! " ^showLTL l ^")"
-  | Imply (l1, l2) -> "(" ^showLTL l1 ^ " -> " ^showLTL l2 ^")"
-  | AndLTL (l1, l2) -> "(" ^showLTL l1 ^ " && " ^showLTL l2 ^")"
-  | OrLTL (l1, l2) -> "(" ^showLTL l1 ^ " || " ^showLTL l2 ^")"
+  List.fold_left (fun acc dec -> acc ^ "\n" ^ string_of_declare dec) "" p
   ;;
 
 

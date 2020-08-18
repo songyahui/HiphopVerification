@@ -1,7 +1,43 @@
-type var = string  (*name of the signal e.g., A B C*)
-type name = string
+type iden = string 
 
+type direction = In | Out | Inout
 
+type hhExpr = Now of iden
+        | Pre of iden
+        | Val of iden
+        | Preval of iden
+
+type hhDelay = Count of hhExpr * hhExpr | Immediate of hhExpr
+
+type hhSigRun = direction * iden * hhExpr option
+
+type hhStat = 
+        HHHalt 
+      | HHBlock of hhStat * hhStat 
+      | HHFork of hhStat * hhStat 
+      | HHEmit of iden * hhExpr option 
+      | HHSustain of iden * hhExpr option 
+      | HHLoop of hhStat
+      | HHYield
+      | HHAwait of hhDelay
+      | HHAbort of hhDelay * hhStat
+      | HHTrap of iden* hhStat
+      | HHBreak of iden
+      | HHRun of hhExpr * hhSigRun list
+      | HHIf of hhExpr * hhStat * hhStat option 
+      | HHExpression of hhExpr
+      | HHDo of hhStat * hhDelay 
+      | HHEvery of hhDelay * hhStat
+       
+
+type hhModule = iden * hhSigRun
+
+type declare = Import of iden | Require of iden* iden| Export of iden| Module of hhModule
+
+type prog = declare list 
+      
+
+(*
 type state = One | Zero
 type mapping = (var * state) 
 
@@ -10,8 +46,8 @@ type mapping = (var * state)
 type instance = mapping list * mapping list 
            (*前面的是constrain,  后面的是signal assignment*)
 
-type fst = Negation of name list
-           | Normal of name list
+type fst = Negation of idenlist
+           | Normal of idenlist
 ;;
 
 (*type event  = Instance of instance   | Not of instance *)
@@ -55,11 +91,11 @@ type hiphop =
           | Await of prog
           | If of cond * prog * prog
           | Emit of var
-          | Trap of name * prog
-          | Exit of name * int
+          | Trap of iden* prog
+          | Exit of iden* int
           | JS of jscode
 
-type prog = Module of name * hiphop list 
+
 
 
 type ltl = Lable of string 
@@ -74,3 +110,4 @@ type ltl = Lable of string
 
 
 type spec_prog = es list * prog
+*)

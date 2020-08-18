@@ -35,12 +35,19 @@ rule token = parse
 | "require" {REQUIRE}
 | "exports" {EXPORTS}
 | "new" {NEW}
+| "hiphop" {HIPHOP} 
+| "module" {MODULE}
+| "in" {IN}
+| "out" {OUT}
+| "inout" {INOUT}
 
 | id as str { VAR str }
 
 | '"' { read_string (Buffer.create 17) lexbuf }
 | '(' { LPAR }
 | ')' { RPAR }
+| '{' { LBRACK }
+| '}' { RBRACK }
 | '=' {EQ}
 | ';' {SIMI}
 | '.' {DOT}

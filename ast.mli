@@ -33,7 +33,7 @@ type hhStat =
       | HHDo of hhStat * hhDelay 
       | HHEvery of hhDelay * hhStat     
 
-type hhModule = iden * hhSigRun
+type hhModule = iden * hhSigRun list 
 
 type declare = Import of iden | Require of iden * iden | Export of iden | Module of hhModule
 

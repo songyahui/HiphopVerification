@@ -95,13 +95,39 @@ let rec input_lines file =
   | _ -> failwith "Weird input_line return value"
 ;;
 
+let rec string_of_expr (expr:hhExpr): string = 
+  match expr with 
+    Now id -> id^".now"
+  | Pre id -> id^".now"
+  | Val id -> id^".now"
+  | Preval id -> id^".now"
+  | Num i -> string_of_int i
+  | _ -> raise (Foo "string_of_expr")
+  ;;
+
+
+let rec string_of_hhSigRun (p: hhSigRun) : string =
+  let (a, b, c) = p in 
+  let str_a = (match a with 
+                In -> "in "
+              | Out -> "out "
+              | Inout -> "inout "
+              ) in 
+  let str_b = b in 
+  let str_c = (match c with 
+                Some a -> "(" ^string_of_expr a ^ ")" 
+              | None -> ""
+              ) in 
+  str_a ^ str_b ^ str_c
+  ;;
+
 
 let string_of_declare (d : declare): string = 
   match d with 
     Import str -> str
   | Require (id1, id2) -> id1 ^ " = " ^ id2
-  | Export e -> e
-  | _ -> raise (Foo "string_of_declare")
+  | Export e -> e 
+  | Module (id, signaLi) -> id ^ List.fold_left (fun acc dec -> acc ^ "," ^ string_of_hhSigRun dec) "" signaLi
   ;;
 
 let rec string_of_prog (p : prog) : string =

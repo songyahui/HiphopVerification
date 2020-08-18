@@ -2,14 +2,14 @@ type iden = string
 
 type direction = In | Out | Inout
 
-type bop = Eq | EqEq | GT | LT
+type op = Plus | Minus | Gt | Lt | GtEq | LtEq 
 
 type hhExpr = Now of iden
         | Pre of iden
         | Val of iden
         | Preval of iden
         | Num of int 
-        | Binary of bop * hhExpr * hhExpr
+        | Binary of op * hhExpr * hhExpr
 
 type hhDelay = Count of hhExpr * hhExpr | Immediate of hhExpr
 
@@ -33,7 +33,7 @@ type hhStat =
       | HHDo of hhStat * hhDelay 
       | HHEvery of hhDelay * hhStat     
 
-type hhModule = iden * hhSigRun list 
+type hhModule = iden * hhSigRun list * hhStat
 
 type declare = Import of iden | Require of iden * iden | Export of iden | Module of hhModule
 

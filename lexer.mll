@@ -40,6 +40,14 @@ rule token = parse
 | "in" {IN}
 | "out" {OUT}
 | "inout" {INOUT}
+| "await" {AWAIT}
+| "count" {COUNT}
+| "now" {NOW} 
+| "pre" {PRE}
+| "val" {VAL}
+| "preval" {PREVAL}
+| "nothing" {HALT} 
+| "yield" {YIELD}
 
 | id as str { VAR str }
 
@@ -52,6 +60,17 @@ rule token = parse
 | ';' {SIMI}
 | '.' {DOT}
 | ',' { COMMA }
+
+(*
+| ">=" {GTEQ}
+| "<=" {LTEQ} 
+| '>' {GT}
+| '<' {LT}
+| '+' {PLUS}
+| '-' {MINUS}
+*)
+
+| int { INTE (int_of_string (Lexing.lexeme lexbuf)) }
 | _ { raise (SyntaxError ("Unexpected char: " ^ Lexing.lexeme lexbuf)) }
 | eof      { EOF }
 

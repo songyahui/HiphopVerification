@@ -3,10 +3,13 @@
 
 %token <string> STRING
 %token <string> VAR
+%token <int> INTE
 
 
-%token EOF SIMI EQ LPAR RPAR DOT COMMA LBRACK RBRACK
-%token VARKEY REQUIRE EXPORTS NEW IN OUT INOUT HIPHOP MODULE
+%token EOF SIMI EQ LPAR RPAR DOT COMMA LBRACK RBRACK 
+%token VARKEY REQUIRE EXPORTS NEW IN OUT INOUT HIPHOP MODULE COUNT AWAIT
+%token (*GT LT PLUS MINUS LTEQ GTEQ *)NOW PRE VAL PREVAL
+%token HALT YIELD
 
 
 
@@ -31,8 +34,44 @@ require:
 export:
 | EXPORTS DOT a = VAR EQ NEW b = VAR DOT c = VAR  LPAR d = VAR COMMA e = STRING RPAR {Export e }
 
+hhStat:
+| AWAIT LPAR d = hhDelay RPAR  SIMI {HHAwait d}
+| HALT {HHHalt} 
+| YIELD {HHYield}
+
+hhStatOuter:
+| a = hhStat {a}
+| a = hhStat b = hhStatOuter {HHBlock (a, b)}
+
+
 modu:
-| HIPHOP MODULE a = VAR LPAR li = signalList RPAR LBRACK RBRACK { Module (a, li)}
+| HIPHOP MODULE a = VAR LPAR li = signalList RPAR LBRACK stste = hhStatOuter RBRACK { Module (a, li,  stste)}
+
+
+hhDelay:
+| COUNT LPAR a = expr COMMA b = expr RPAR {Count (a, b)}
+| a = expr {Immediate a}
+
+(*
+op : 
+| PLUS {Plus} 
+| MINUS {Minus} 
+| GT {Gt}
+| LT {Lt}
+| GTEQ {GtEq}
+| LTEQ {LtEq}  
+*)
+
+expr: 
+| n = INTE {Num n}
+| h = VAR DOT NOW {Now h}
+| h = VAR DOT PRE {Pre h}
+| h = VAR DOT PREVAL {Preval h}
+| h = VAR DOT VAL {Val h}
+(*
+| a = expr o = op c = expr { Binary (o, a, c)}
+*)
+
 
 direction : 
 | IN {In} | OUT {Out} | INOUT {Inout}

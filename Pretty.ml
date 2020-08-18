@@ -127,7 +127,7 @@ let string_of_declare (d : declare): string =
     Import str -> str
   | Require (id1, id2) -> id1 ^ " = " ^ id2
   | Export e -> e 
-  | Module (id, signaLi) -> id ^ List.fold_left (fun acc dec -> acc ^ "," ^ string_of_hhSigRun dec) "" signaLi
+  | Module (id, signaLi, state) -> id ^ List.fold_left (fun acc dec -> acc ^ "," ^ string_of_hhSigRun dec) "" signaLi
   ;;
 
 let rec string_of_prog (p : prog) : string =

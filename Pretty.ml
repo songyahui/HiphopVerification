@@ -157,17 +157,25 @@ let rec string_of_hhStat (sts:hhStat) :string =
     | None -> "")
   | HHDoEvery (hhStat1, hhDelay1) -> "\ndo{ \n"^ string_of_hhStat hhStat1 ^ "}\n" ^ "every" ^ string_of_hhDelay hhDelay1
   | HHAwait d -> "await " ^ string_of_hhDelay d 
+  | HHYield -> "yield; \n"
+  | HHLoop stat -> "loop {\n" ^ string_of_hhStat stat ^ "\n}\n"
+  | HHExpression expr -> string_of_expr expr
+  | HHIf (hhexpr, hhstat1, hhstat2) -> 
+    "if (" ^string_of_expr hhexpr ^"){" ^
+    string_of_hhStat hhstat1 ^ "}\n" ^
+    (match hhstat2 with 
+      Some s -> "{" ^ string_of_hhStat s ^"}"
+    | None -> "")
+  | HHAbort (hhDelay, hhStat) -> 
+    "abort (" ^string_of_hhDelay hhDelay ^"){" ^
+    string_of_hhStat hhStat ^"}"
+
   | _ -> "string_of_hhStat"
   (*
   | HHSustain of iden * hhExpr option 
-  | HHLoop of hhStat
-  | HHYield
-  | HHAbort of hhDelay * hhStat
   | HHTrap of iden* hhStat
   | HHBreak of iden
   | HHRun of hhExpr * hhSigRun list
-  | HHIf of hhExpr * hhStat * hhStat option 
-  | HHExpression of hhExpr
   *)
   ;;
 

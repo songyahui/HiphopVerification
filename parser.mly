@@ -8,8 +8,8 @@
 
 %token EOF SIMI EQ LPAR RPAR DOT COMMA LBRACK RBRACK 
 %token VARKEY REQUIRE EXPORTS NEW IN OUT INOUT HIPHOP MODULE COUNT AWAIT
-%token (*GT LT PLUS MINUS LTEQ GTEQ *)NOW PRE VAL PREVAL
-%token HALT YIELD
+%token (*GT LT PLUS MINUS LTEQ GTEQ *)NOW PRE VAL PREVAL DO EVERY EMIT
+%token HALT YIELD FORK PAR
 
 
 
@@ -34,10 +34,24 @@ require:
 export:
 | EXPORTS DOT a = VAR EQ NEW b = VAR DOT c = VAR  LPAR d = VAR COMMA e = STRING RPAR {Export e }
 
+paralle: 
+| PAR LBRACK st =hhStatOuter  RBRACK {[st]}
+
+paralleList:
+| {[]}
+| p1 = paralle  p2 = paralleList {append p1 p2 }
+
+annot:
+| {None}
+| p = expr {Some p}
+
 hhStat:
 | AWAIT LPAR d = hhDelay RPAR  SIMI {HHAwait d}
 | HALT {HHHalt} 
 | YIELD {HHYield}
+| EMIT n = VAR LPAR a= annot RPAR SIMI {HHEmit (n, a)}
+| DO LBRACK st =hhStatOuter  RBRACK EVERY LPAR d = hhDelay RPAR  {HHDoEvery (st, d)}
+| FORK LBRACK st =hhStatOuter  RBRACK par= paralleList {HHFork (append [st] par)}
 
 hhStatOuter:
 | a = hhStat {a}

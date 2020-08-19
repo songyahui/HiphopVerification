@@ -121,13 +121,66 @@ let rec string_of_hhSigRun (p: hhSigRun) : string =
   str_a ^ str_b ^ str_c
   ;;
 
+let rec string_of_op (op:op) :string = 
+  match op with 
+  | Plus -> "+" 
+  | Minus -> "-" 
+  | Gt -> ">" 
+  | Lt -> "<"
+  | GtEq -> ">=" 
+  | LtEq -> "<="
+  ;;
+
+let rec string_of_expr (expr:hhExpr) :string = 
+  match expr with 
+    Now id -> id ^".now"
+  | Pre id -> id ^".pre"
+  | Val id -> id ^".val"
+  | Preval id -> id ^".preval"
+  | Num i -> string_of_int i 
+  | Binary (op, e1, e2) -> string_of_expr e1 ^ string_of_op op^ string_of_expr e2
+  ;;
+
+let rec string_of_hhDelay (d: hhDelay):string =
+  match d with 
+  | Count (e1, e2) -> "count("^ string_of_expr e1 ^","^ string_of_expr e2 ^")"
+  | Immediate e ->string_of_expr e 
+  ;;
+
+let rec string_of_hhStat (sts:hhStat) :string =
+  match sts with 
+  | HHHalt -> "nothing" 
+  | HHBlock (hhStat1, hhStat2) -> string_of_hhStat hhStat1 ^ "\n" ^ string_of_hhStat hhStat2 
+  | HHFork hhStatL -> List.fold_left (fun acc cur -> acc ^ "\n||\n" ^ string_of_hhStat cur) "" hhStatL
+  | HHEmit (id, ex) -> "emit " ^ id ^ (match ex with 
+    Some p -> string_of_expr p
+    | None -> "")
+  | HHDoEvery (hhStat1, hhDelay1) -> "\ndo{ \n"^ string_of_hhStat hhStat1 ^ "}\n" ^ "every" ^ string_of_hhDelay hhDelay1
+  | HHAwait d -> "await " ^ string_of_hhDelay d 
+  | _ -> "string_of_hhStat"
+  (*
+  | HHSustain of iden * hhExpr option 
+  | HHLoop of hhStat
+  | HHYield
+  | HHAbort of hhDelay * hhStat
+  | HHTrap of iden* hhStat
+  | HHBreak of iden
+  | HHRun of hhExpr * hhSigRun list
+  | HHIf of hhExpr * hhStat * hhStat option 
+  | HHExpression of hhExpr
+  *)
+  ;;
+
 
 let string_of_declare (d : declare): string = 
   match d with 
     Import str -> str
   | Require (id1, id2) -> id1 ^ " = " ^ id2
   | Export e -> e 
-  | Module (id, signaLi, state) -> id ^ List.fold_left (fun acc dec -> acc ^ "," ^ string_of_hhSigRun dec) "" signaLi
+  | Module (id, signaLi, state) -> 
+    id ^ 
+    (List.fold_left (fun acc dec -> acc ^ "," ^ string_of_hhSigRun dec) "(" signaLi)^ ")" ^
+    string_of_hhStat state   ^"\n"
   ;;
 
 let rec string_of_prog (p : prog) : string =

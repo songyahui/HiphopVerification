@@ -18,7 +18,7 @@ type hhSigRun = direction * iden * hhExpr option
 type hhStat = 
         HHHalt 
       | HHBlock of hhStat * hhStat 
-      | HHFork of hhStat * hhStat 
+      | HHFork of hhStat list 
       | HHEmit of iden * hhExpr option 
       | HHSustain of iden * hhExpr option 
       | HHLoop of hhStat
@@ -30,8 +30,7 @@ type hhStat =
       | HHRun of hhExpr * hhSigRun list
       | HHIf of hhExpr * hhStat * hhStat option 
       | HHExpression of hhExpr
-      | HHDo of hhStat * hhDelay 
-      | HHEvery of hhDelay * hhStat     
+      | HHDoEvery of hhStat * hhDelay 
 
 type hhModule = iden * hhSigRun list * hhStat
 

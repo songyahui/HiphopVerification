@@ -48,7 +48,11 @@ rule token = parse
 | "preval" {PREVAL}
 | "nothing" {HALT} 
 | "yield" {YIELD}
-
+| "do" {DO}
+| "every" {EVERY}
+| "emit" {EMIT}
+| "fork" {FORK}
+| "par" {PAR}
 | id as str { VAR str }
 
 | '"' { read_string (Buffer.create 17) lexbuf }

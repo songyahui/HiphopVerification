@@ -32,6 +32,7 @@ rule token = parse
 | newline  { next_line lexbuf; token lexbuf }
 
 | "var"   { VARKEY }
+| "const"  { CONST }
 | "require" {REQUIRE}
 | "exports" {EXPORTS}
 | "new" {NEW}
@@ -53,6 +54,11 @@ rule token = parse
 | "emit" {EMIT}
 | "fork" {FORK}
 | "par" {PAR}
+| "signal" {SIGNAL}
+| "loop" {LOOP}
+| "abort" {ABORT}
+| "if" {IF}
+| "else" {ELSE}
 | id as str { VAR str }
 
 | '"' { read_string (Buffer.create 17) lexbuf }

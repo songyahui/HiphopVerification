@@ -31,6 +31,7 @@ type hhStat =
       | HHIf of hhExpr * hhStat * hhStat option 
       | HHExpression of hhExpr
       | HHDoEvery of hhStat * hhDelay 
+      | HHDelare of iden 
 
 type hhModule = iden * hhSigRun list * hhStat
 

@@ -1,9 +1,9 @@
-"use hiphop";
-"use hopscript";
+"use hiphop"
+"use hopscript"
 
 var hh = require( "hiphop" );
 
-hiphop module prg( O, S ) {
+hiphop module prg(out O, out S ) {
    loop {
       abort( S.pre ) {
 	 emit S();
@@ -14,6 +14,5 @@ hiphop module prg( O, S ) {
    }
 }
 
-//console.error(prg.pretty_print())
 
 exports.prg = new hh.ReactiveMachine(prg, "abortpre");
